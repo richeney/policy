@@ -1,0 +1,53 @@
+{
+    "displayName": "Inherit environment tag from the subscription",
+    "description": "Inherits the environment tag from the subscription when it is not set. Default value is intentionally non-compliant.",
+    "mode": "Indexed",
+    "metadata": {
+        "version": "0.1.0",
+        "category": "Tags",
+        "preview": true
+    },
+    "parameters": {
+        "envValues": {
+            "type": "Array",
+            "metadata": {
+                "displayName": "Environment Values",
+                "description": "Array of permitted values for the tag. Defaults to 'dev', 'test', 'prod'. Not in use yet."
+            },
+            "defaultValue": [
+                "dev",
+                "test",
+                "prod"
+            ]
+        }
+    },
+    "policyRule": {
+        "if": {
+            "allOf": [
+                {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+                },
+                {
+                    "field": "tags",
+                    "notContainsKey": "environment"
+                }
+            ]
+        },
+        "then": {
+            "effect": "modify",
+            "details": {
+                "roleDefinitionIds": [
+                    "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                ],
+                "operations": [
+                    {
+                        "operation": "addOrReplace",
+                        "field": "tags['environment']",
+                        "value": "[subscription().tags['environment']]"
+                    }
+                ]
+            }
+        }
+    }
+}

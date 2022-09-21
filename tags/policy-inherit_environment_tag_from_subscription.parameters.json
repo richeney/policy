@@ -1,0 +1,14 @@
+{
+  "envValues": {
+    "type": "Array",
+    "metadata": {
+      "displayName": "Environment Values",
+      "description": "Array of permitted values for the tag. Defaults to 'dev', 'test', 'prod'. Not in use yet."
+    },
+    "defaultValue": [
+      "dev",
+      "test",
+      "prod"
+    ]
+  }
+}
