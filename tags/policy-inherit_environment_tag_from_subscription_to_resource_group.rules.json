@@ -2,6 +2,10 @@
   "if": {
     "allOf": [
       {
+        "field": "type",
+        "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+      },
+      {
         "field": "tags['environment']",
         "notEquals": "[subscription().tags['environment']]"
       },

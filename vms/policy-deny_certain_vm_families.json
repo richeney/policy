@@ -1,0 +1,47 @@
+{
+    "displayName": "Prohibit virtual machine SKU families",
+    "description": "This policy enables you to specify a set of virtual machine SKUs families that your organization prohibits for deployment.",
+    "mode": "Indexed",
+    "metadata": {
+        "version": "0.1.0",
+        "category": "Compute",
+        "preview": true
+    },
+    "parameters": {
+        "listOfProhibitedSkuFamilies": {
+            "type": "Array",
+            "metadata": {
+                "description": "The list of virtual machine SKU families that are prohibited, e.g. \"standard_m*\".",
+                "displayName": "Prohibited VM SKU families"
+            },
+            "defaultValue": [
+                "standard_l*",
+                "standard_m*"
+            ]
+        }
+    },
+    "policyRule": {
+        "if": {
+            "allOf": [
+                {
+                    "field": "type",
+                    "equals": "Microsoft.Compute/virtualMachines"
+                },
+                {
+                    "count": {
+                        "value": "[parameters('listOfProhibitedSkuFamilies')]",
+                        "name": "SkuFamily",
+                        "where": {
+                            "field": "Microsoft.Compute/virtualMachines/sku.name",
+                            "like": "[current('SkuFamily')]"
+                        }
+                    },
+                    "greater": 0
+                }
+            ]
+        },
+        "then": {
+            "effect": "Deny"
+        }
+    }
+}

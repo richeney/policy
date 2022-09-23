@@ -1,7 +1,7 @@
 {
-    "displayName": "Inherit environment tag from the subscription",
-    "description": "Inherits the environment tag from the subscription scope,if it is set.",
-    "mode": "Indexed",
+    "displayName": "Set resource group environment tag from the subscription",
+    "description": "Inherits the environment tag from the subscription scope,if it is set and applies to resource groups.",
+    "mode": "All",
     "metadata": {
         "version": "0.1.0",
         "category": "Tags",
@@ -11,13 +11,17 @@
         "if": {
             "allOf": [
                 {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+                },
+                {
                     "field": "tags['environment']",
                     "notEquals": "[subscription().tags['environment']]"
-                  },
-                  {
+                },
+                {
                     "value": "[subscription().tags['environment']]",
                     "notEquals": ""
-                  }
+                }
             ]
         },
         "then": {

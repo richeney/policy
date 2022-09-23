@@ -1,0 +1,13 @@
+{
+  "listOfProhibitedSkuFamilies": {
+    "type": "Array",
+    "metadata": {
+      "description": "The list of virtual machine SKU families that are prohibited, e.g. \"standard_m*\".",
+      "displayName": "Prohibited VM SKU families"
+    },
+    "defaultValue": [
+      "standard_l*",
+      "standard_m*"
+    ]
+  }
+}
