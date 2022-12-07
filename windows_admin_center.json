@@ -1,0 +1,103 @@
+{
+  "properties": {
+    "displayName": "Deploy Windows Admin Center to Windows Azure Arc machines",
+    "description": "Deploy the Windows Admin Center extension to Windows Azure Arc-enabled virtual machines.",
+    "metadata": {
+      "version": "0.1.0",
+      "category": "Azure Arc",
+      "preview": true
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy."
+        },
+        "allowedValues": [
+          "DeployIfNotExists",
+          "Disabled"
+        ],
+        "defaultValue": "DeployIfNotExists"
+      },
+      "listOfApplicableLocations": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "Applicable Locations",
+          "description": "The list of locations where the policy should be applied.",
+          "strongType": "location"
+        },
+        "allowedValues": [
+          "australiaeast",
+          "canadacentral",
+          "centralus",
+          "eastasia",
+          "eastus",
+          "eastus2",
+          "francecentral",
+          "japaneast",
+          "koreacentral",
+          "northcentralus",
+          "northeurope",
+          "southcentralus",
+          "southeastasia",
+          "uksouth",
+          "ukwest",
+          "westcentralus",
+          "westeurope",
+          "westus",
+          "westus2",
+          "westus3"
+        ],
+        "defaultValue": [
+          "australiaeast",
+          "canadacentral",
+          "centralus",
+          "eastasia",
+          "eastus",
+          "eastus2",
+          "francecentral",
+          "japaneast",
+          "koreacentral",
+          "northcentralus",
+          "northeurope",
+          "southcentralus",
+          "southeastasia",
+          "uksouth",
+          "ukwest",
+          "westcentralus",
+          "westeurope",
+          "westus",
+          "westus2",
+          "westus3"
+        ]
+      }
+    },
+    "policyDefinitions": [
+      {
+        "policyDefinitionReferenceId": "auditWindowsAdminCenterOnArc",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/d367bd60-64ca-4364-98ea-276775bddd94",
+        "parameters": {
+          "effect": {
+            "value": "[parameters('effect')]"
+          },
+          "listOfApplicableLocations": {
+            "value": "[parameters('listOfApplicableLocations')]"
+          }
+        }
+      },
+      {
+        "policyDefinitionReferenceId": "deployWindowsAdminCenterOnArc",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/516187d4-ef64-4a1b-ad6b-a7348502976c",
+        "parameters": {
+          "effect": {
+            "value": "[parameters('effect')]"
+          },
+          "listOfApplicableLocations": {
+            "value": "[parameters('listOfApplicableLocations')]"
+          }
+        }
+      }
+    ]
+  }
+}
