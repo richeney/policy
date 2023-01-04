@@ -1,1 +1,90 @@
-null
+{
+  "if": {
+    "allOf": [
+      {
+        "field": "type",
+        "equals": "Microsoft.HybridCompute/machines"
+      },
+      {
+        "field": "location",
+        "in": "[parameters('listOfApplicableLocations')]"
+      },
+      {
+        "field": "Microsoft.HybridCompute/imageOffer",
+        "like": "windows*"
+      }
+    ]
+  },
+  "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+      "type": "Microsoft.HybridCompute/machines/extensions",
+      "roleDefinitionIds": [
+        "/providers/microsoft.authorization/roleDefinitions/cd570a14-e51a-42ad-bac8-bafd67325302"
+      ],
+      "existenceCondition": {
+        "allOf": [
+          {
+            "field": "Microsoft.HybridCompute/machines/extensions/type",
+            "equals": "AdminCenter"
+          },
+          {
+            "field": "Microsoft.HybridCompute/machines/extensions/Publisher",
+            "equals": "Microsoft.AdminCenter"
+          },
+          {
+            "field": "Microsoft.HybridCompute/machines/extensions/provisioningState",
+            "equals": "Succeeded"
+          }
+        ]
+      },
+      "deployment": {
+        "properties": {
+          "mode": "incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+              "vmName": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              }
+            },
+            "variables": {
+              "vmExtensionName": "AdminCenter",
+              "vmExtensionPublisher": "Microsoft.AdminCenter",
+              "vmExtensionType": "AdminCenter",
+              "vmExtensionTypeHandlerVersion": "0.0.0"
+            },
+            "resources": [
+              {
+                "name": "[concat(parameters('vmName'), '/', variables('vmExtensionName'))]",
+                "type": "Microsoft.HybridCompute/machines/extensions",
+                "location": "[parameters('location')]",
+                "apiVersion": "2022-08-11-preview",
+                "properties": {
+                  "publisher": "[variables('vmExtensionPublisher')]",
+                  "type": "[variables('vmExtensionType')]",
+                  "typeHandlerVersion": "[variables('vmExtensionTypeHandlerVersion')]",
+                  "autoUpgradeMinorVersion": true,
+                  "settings": {},
+                  "protectedSettings": {}
+                }
+              }
+            ]
+          },
+          "parameters": {
+            "vmName": {
+              "value": "[field('name')]"
+            },
+            "location": {
+              "value": "[field('location')]"
+            }
+          }
+        }
+      }
+    }
+  }
+}

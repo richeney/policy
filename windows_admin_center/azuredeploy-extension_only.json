@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of existing Windows Azure Arc-enabled Server."
+            }
+        },
+        "port": {
+            "type": "int",
+            "defaultValue": 6516,
+            "metadata": {
+                "description": "The port for Windows Admin Center."
+            }
+        }
+    },
+    "variables": {
+        "vmId": "[resourceId('Microsoft.HybridCompute/machines', parameters('vmName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.HybridCompute/machines/extensions",
+            "apiVersion": "2022-11-10",
+            "name": "[concat(parameters('vmName'),'/AdminCenter')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "enableAutomaticUpgrade": true,
+                "type": "AdminCenter",
+                "publisher": "Microsoft.AdminCenter",
+                "settings": {
+                    "port": "[parameters('port')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "endpoint",
+            "location": "[resourceGroup().location]",
+            "kind": "AzureCLI",
+            "properties": {
+                "forceUpdateTag": "1",
+                "azCliVersion": "2.9.1",
+                "scriptContent": "az rest --method put --url $url=[concat(variables('vmId'), '/providers/Microsoft.HybridConnectivity/endpoints/default?api-version=2021-10-06-preview'] --body '{\"properties\": {\"type\": \"default\"}}'",
+                "timeout": "PT30M",
+                "retentionInterval": "P1D"
+            }
+        }
+    ],
+    "outputs": {}
+}

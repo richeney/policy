@@ -14,6 +14,16 @@ do
 done
 ```
 
+Repeat for initiatives
+
+```bash
+for initiative in $(find . -name "initiative-*.json" ! -name "*.parameters.json" ! -name "*.definitions.json")
+do
+  jq .parameters $initiative > ${initiative%%.json}.parameters.json
+  jq .policyDefinitions $initiative > ${initiative%%.json}.definitions.json
+done
+```
+
 ## Creating custom policy using the CLI
 
 ```bash
@@ -21,18 +31,17 @@ policy=./tags/policy-inherit_environment_tag_from_subscription.json
 ```
 
 ```bash
-name=$(basename $policy .json | sed 's/^policy-//1')
-desc=$(jq -r .description $policy)
-display=$(jq -r .displayName $policy)
-mode=$(jq -r .mode $policy)
-metadata=$(jq -r '.metadata|to_entries|map("\(.key)=\(.value|tostring)")|.[]' $policy)
+name="$(basename $policy .json | sed 's/^policy-//1')"
+desc="$(jq -r .description $policy)"
+display="$(jq -r .displayName $policy)"
+mode="$(jq -r .mode $policy)"
+metadata="$(jq -r '.metadata|to_entries|map("\(.key)=\"\(.value|tostring)\"")|.[]' $policy)"
 params=${policy%%.json}.parameters.json
 rules=${policy%%.json}.rules.json
 ```
 
 ```bash
-# az policy definition create --name $name --description "$desc" --display-name "$display" --metadata $metadata --mode $mode --rules $rules --params $params
-az policy definition create --name $name --description "$desc" --display-name "$display" --metadata $metadata --mode $mode --rules $rules
+az policy definition create --name $name --description "$desc" --display-name "$display" --metadata "$metadata" --mode $mode --rules $rules --params $params
 ```
 
 Creates at subscription scope. Add `--subscription` to set subscription. Or use `--management-group`.

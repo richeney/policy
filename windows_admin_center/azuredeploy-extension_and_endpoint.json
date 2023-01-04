@@ -1,0 +1,108 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of existing Windows Azure Arc-enabled Server."
+            }
+        },
+        "port": {
+            "type": "int",
+            "defaultValue": 6516,
+            "metadata": {
+                "description": "The port for Windows Admin Center."
+            }
+        }
+    },
+    "variables": {
+        "vmId": "[resourceId('Microsoft.HybridCompute/machines', parameters('vmName'))]",
+        "roleName": "Hybrid Connectivity Endpoint Contributor",
+        "identityName": "HybridConnectivityEndpointManagedIdentity"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.HybridCompute/machines/extensions",
+            "apiVersion": "2022-11-10",
+            "name": "[concat(parameters('vmName'),'/AdminCenter')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "enableAutomaticUpgrade": true,
+                "type": "AdminCenter",
+                "publisher": "Microsoft.AdminCenter",
+                "settings": {
+                    "port": "[parameters('port')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleDefinitions",
+            "apiVersion": "2022-04-01",
+            "name": "[guid(variables('roleName'))]",
+            "properties": {
+                "roleName": "[variables('roleName')]",
+                "description": "Least privilege for creating Azure Arc VM endpoints for SSH and Windows Admin Center,",
+                "permissions": [
+                    {
+                        "actions": [
+                            "Microsoft.HybridConnectivity/endpoints/read",
+                            "Microsoft.HybridConnectivity/endpoints/write"
+                        ],
+                        "notActions": []
+                    }
+                ],
+                "assignableScopes": [
+                    "[resourceGroup().id]"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "apiVersion": "2022-01-31-preview",
+            "name": "[variables('identityName')]",
+            "location": "[resourceGroup().location]"
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[guid(resourceGroup().id, 'HybridConnectivityEndpointRbacAssignment')]",
+            "dependsOn": [
+                "[variables('identityName')]",
+                "[guid(variables('roleName'))]"
+            ],
+            "properties": {
+                "description": "Assign the DeploymentScripts managed identity to create endpoints on the resource group",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))).principalId]",
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', guid(variables('roleName')))]"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "HybridConnectivityEndpointDeploymentScript",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[guid(resourceGroup().id, 'HybridConnectivityEndpointRbacAssignment')]"
+            ],
+            "kind": "AzureCLI",
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]": {}
+                }
+            },
+            "properties": {
+                "arguments": "[concat(variables('vmId'), '/providers/Microsoft.HybridConnectivity/endpoints/default?api-version=2021-10-06-preview')]",
+                "scriptContent": "az rest --method put --url $1 --body '{\"properties\": {\"type\": \"default\"}}'",
+                "forceUpdateTag": "1",
+                "azCliVersion": "2.9.1",
+                "timeout": "PT30M",
+                "retentionInterval": "P1D"
+            }
+        }
+    ],
+    "outputs": {}
+}

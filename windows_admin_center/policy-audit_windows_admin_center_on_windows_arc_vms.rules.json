@@ -1,1 +1,40 @@
-null
+{
+  "if": {
+    "allOf": [
+      {
+        "field": "type",
+        "equals": "Microsoft.HybridCompute/machines"
+      },
+      {
+        "field": "location",
+        "in": "[parameters('listOfApplicableLocations')]"
+      },
+      {
+        "field": "Microsoft.HybridCompute/imageOffer",
+        "like": "windows*"
+      }
+    ]
+  },
+  "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+      "type": "Microsoft.HybridCompute/machines/extensions",
+      "existenceCondition": {
+        "allOf": [
+          {
+            "field": "Microsoft.HybridCompute/machines/extensions/type",
+            "equals": "AdminCenter"
+          },
+          {
+            "field": "Microsoft.HybridCompute/machines/extensions/Publisher",
+            "equals": "Microsoft.AdminCenter"
+          },
+          {
+            "field": "Microsoft.HybridCompute/machines/extensions/provisioningState",
+            "equals": "Succeeded"
+          }
+        ]
+      }
+    }
+  }
+}

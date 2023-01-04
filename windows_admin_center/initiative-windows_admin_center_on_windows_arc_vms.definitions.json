@@ -1,0 +1,26 @@
+[
+  {
+    "policyDefinitionReferenceId": "auditWindowsAdminCenterOnArc",
+    "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/alz/providers/Microsoft.Authorization/policyDefinitions/audit_windows_admin_center_on_windows_arc_vms",
+    "parameters": {
+      "effect": {
+        "value": "[if(equals(parameters('effect'), 'Disabled'), 'Disabled', 'AuditIfNotExists')]"
+      },
+      "listOfApplicableLocations": {
+        "value": "[parameters('listOfApplicableLocations')]"
+      }
+    }
+  },
+  {
+    "policyDefinitionReferenceId": "configureWindowsAdminCenterOnArc",
+    "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/alz/providers/Microsoft.Authorization/policyDefinitions/configure_windows_admin_center_on_windows_arc_vms",
+    "parameters": {
+      "effect": {
+        "value": "[if(equals(parameters('effect'), 'DeployIfNotExists'), 'DeployIfNotExists', 'Disabled')]"
+      },
+      "listOfApplicableLocations": {
+        "value": "[parameters('listOfApplicableLocations')]"
+      }
+    }
+  }
+]

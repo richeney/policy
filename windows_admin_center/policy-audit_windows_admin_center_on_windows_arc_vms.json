@@ -1,116 +1,114 @@
 {
-    "properties": {
-        "displayName": "[Preview]: Windows Admin Center extension should be installed on your Windows Arc machine",
-        "description": "Windows Admin Center extension should be installed on your Windows Arc machine.",
-        "mode": "Indexed",
-        "metadata": {
-            "version": "0.1.0-preview",
-            "category": "Azure Arc",
-            "preview": true
-        },
-        "parameters": {
-            "effect": {
-                "type": "String",
-                "metadata": {
-                    "displayName": "Effect",
-                    "description": "Enable or disable the execution of the policy"
-                },
-                "allowedValues": [
-                    "AuditIfNotExists",
-                    "Disabled"
-                ],
-                "defaultValue": "AuditIfNotExists"
+    "displayName": "[Preview]: Windows Admin Center extension should be installed on your Windows Arc machine",
+    "description": "Windows Admin Center extension should be installed on your Windows Arc machine.",
+    "mode": "Indexed",
+    "metadata": {
+        "version": "0.1.0-preview",
+        "category": "Azure Arc",
+        "preview": true
+    },
+    "parameters": {
+        "effect": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Effect",
+                "description": "Enable or disable the execution of the policy"
             },
-            "listOfApplicableLocations": {
-                "type": "Array",
-                "metadata": {
-                    "displayName": "Applicable Locations",
-                    "description": "The list of locations where the policy should be applied.",
-                    "strongType": "location"
-                },
-                "allowedValues": [
-                    "australiaeast",
-                    "canadacentral",
-                    "centralus",
-                    "eastasia",
-                    "eastus",
-                    "eastus2",
-                    "francecentral",
-                    "japaneast",
-                    "koreacentral",
-                    "northcentralus",
-                    "northeurope",
-                    "southcentralus",
-                    "southeastasia",
-                    "uksouth",
-                    "ukwest",
-                    "westcentralus",
-                    "westeurope",
-                    "westus",
-                    "westus2",
-                    "westus3"
-                ],
-                "defaultValue": [
-                    "australiaeast",
-                    "canadacentral",
-                    "centralus",
-                    "eastasia",
-                    "eastus",
-                    "eastus2",
-                    "francecentral",
-                    "japaneast",
-                    "koreacentral",
-                    "northcentralus",
-                    "northeurope",
-                    "southcentralus",
-                    "southeastasia",
-                    "uksouth",
-                    "ukwest",
-                    "westcentralus",
-                    "westeurope",
-                    "westus",
-                    "westus2",
-                    "westus3"
-                ]
-            }
+            "allowedValues": [
+                "AuditIfNotExists",
+                "Disabled"
+            ],
+            "defaultValue": "AuditIfNotExists"
         },
-        "policyRule": {
-            "if": {
-                "allOf": [
-                    {
-                        "field": "type",
-                        "equals": "Microsoft.HybridCompute/machines"
-                    },
-                    {
-                        "field": "location",
-                        "in": "[parameters('listOfApplicableLocations')]"
-                    },
-                    {
-                        "field": "Microsoft.HybridCompute/imageOffer",
-                        "like": "windows*"
-                    }
-                ]
+        "listOfApplicableLocations": {
+            "type": "Array",
+            "metadata": {
+                "displayName": "Applicable Locations",
+                "description": "The list of locations where the policy should be applied.",
+                "strongType": "location"
             },
-            "then": {
-                "effect": "[parameters('effect')]",
-                "details": {
-                    "type": "Microsoft.HybridCompute/machines/extensions",
-                    "existenceCondition": {
-                        "allOf": [
-                            {
-                                "field": "Microsoft.HybridCompute/machines/extensions/type",
-                                "equals": "AdminCenter"
-                            },
-                            {
-                                "field": "Microsoft.HybridCompute/machines/extensions/Publisher",
-                                "equals": "Microsoft.AdminCenter"
-                            },
-                            {
-                                "field": "Microsoft.HybridCompute/machines/extensions/provisioningState",
-                                "equals": "Succeeded"
-                            }
-                        ]
-                    }
+            "allowedValues": [
+                "australiaeast",
+                "canadacentral",
+                "centralus",
+                "eastasia",
+                "eastus",
+                "eastus2",
+                "francecentral",
+                "japaneast",
+                "koreacentral",
+                "northcentralus",
+                "northeurope",
+                "southcentralus",
+                "southeastasia",
+                "uksouth",
+                "ukwest",
+                "westcentralus",
+                "westeurope",
+                "westus",
+                "westus2",
+                "westus3"
+            ],
+            "defaultValue": [
+                "australiaeast",
+                "canadacentral",
+                "centralus",
+                "eastasia",
+                "eastus",
+                "eastus2",
+                "francecentral",
+                "japaneast",
+                "koreacentral",
+                "northcentralus",
+                "northeurope",
+                "southcentralus",
+                "southeastasia",
+                "uksouth",
+                "ukwest",
+                "westcentralus",
+                "westeurope",
+                "westus",
+                "westus2",
+                "westus3"
+            ]
+        }
+    },
+    "policyRule": {
+        "if": {
+            "allOf": [
+                {
+                    "field": "type",
+                    "equals": "Microsoft.HybridCompute/machines"
+                },
+                {
+                    "field": "location",
+                    "in": "[parameters('listOfApplicableLocations')]"
+                },
+                {
+                    "field": "Microsoft.HybridCompute/imageOffer",
+                    "like": "windows*"
+                }
+            ]
+        },
+        "then": {
+            "effect": "[parameters('effect')]",
+            "details": {
+                "type": "Microsoft.HybridCompute/machines/extensions",
+                "existenceCondition": {
+                    "allOf": [
+                        {
+                            "field": "Microsoft.HybridCompute/machines/extensions/type",
+                            "equals": "AdminCenter"
+                        },
+                        {
+                            "field": "Microsoft.HybridCompute/machines/extensions/Publisher",
+                            "equals": "Microsoft.AdminCenter"
+                        },
+                        {
+                            "field": "Microsoft.HybridCompute/machines/extensions/provisioningState",
+                            "equals": "Succeeded"
+                        }
+                    ]
                 }
             }
         }

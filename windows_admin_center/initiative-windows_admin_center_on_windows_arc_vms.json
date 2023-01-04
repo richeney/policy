@@ -1,0 +1,102 @@
+{
+  "displayName": "[Preview]: Deploy Windows Admin Center to Windows Azure Arc machines",
+  "description": "Deploy the Windows Admin Center extension to Windows Azure Arc-enabled virtual machines.",
+  "metadata": {
+    "version": "0.1.0",
+    "category": "Azure Arc",
+    "preview": true
+  },
+  "parameters": {
+    "effect": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Effect",
+        "description": "Enable or disable the execution of the policy."
+      },
+      "allowedValues": [
+        "DeployIfNotExists",
+        "AuditIfNotExists",
+        "Disabled"
+      ],
+      "defaultValue": "DeployIfNotExists"
+    },
+    "listOfApplicableLocations": {
+      "type": "Array",
+      "metadata": {
+        "displayName": "Applicable Locations",
+        "description": "The list of locations where the policy should be applied.",
+        "strongType": "location"
+      },
+      "allowedValues": [
+        "australiaeast",
+        "canadacentral",
+        "centralus",
+        "eastasia",
+        "eastus",
+        "eastus2",
+        "francecentral",
+        "japaneast",
+        "koreacentral",
+        "northcentralus",
+        "northeurope",
+        "southcentralus",
+        "southeastasia",
+        "uksouth",
+        "ukwest",
+        "westcentralus",
+        "westeurope",
+        "westus",
+        "westus2",
+        "westus3"
+      ],
+      "defaultValue": [
+        "australiaeast",
+        "canadacentral",
+        "centralus",
+        "eastasia",
+        "eastus",
+        "eastus2",
+        "francecentral",
+        "japaneast",
+        "koreacentral",
+        "northcentralus",
+        "northeurope",
+        "southcentralus",
+        "southeastasia",
+        "uksouth",
+        "ukwest",
+        "westcentralus",
+        "westeurope",
+        "westus",
+        "westus2",
+        "westus3"
+      ]
+    }
+  },
+  "policyDefinitions": [
+    {
+      "policyDefinitionReferenceId": "auditWindowsAdminCenterOnArc",
+      "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/alz/providers/Microsoft.Authorization/policyDefinitions/audit_windows_admin_center_on_windows_arc_vms",
+      "parameters": {
+        "effect": {
+          "value": "[if(equals(parameters('effect'), 'Disabled'), 'Disabled', 'AuditIfNotExists')]"
+        },
+        "listOfApplicableLocations": {
+          "value": "[parameters('listOfApplicableLocations')]"
+        }
+      }
+    },
+    {
+      "policyDefinitionReferenceId": "configureWindowsAdminCenterOnArc",
+      "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/alz/providers/Microsoft.Authorization/policyDefinitions/configure_windows_admin_center_on_windows_arc_vms",
+      "parameters": {
+        "effect": {
+          "value": "[if(equals(parameters('effect'), 'DeployIfNotExists'), 'DeployIfNotExists', 'Disabled')]"
+        },
+        "listOfApplicableLocations": {
+          "value": "[parameters('listOfApplicableLocations')]"
+        }
+      }
+    }
+  ]
+}

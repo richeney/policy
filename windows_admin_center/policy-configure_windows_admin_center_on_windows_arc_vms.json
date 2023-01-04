@@ -1,171 +1,166 @@
 {
-  "properties": {
-    "displayName": "[Preview]: Configure Windows Arc machines to automatically install the Windows Admin Center extension.",
-    "description": "Configure Windows Admin Center extension for Windows Arc machines.",
-    "mode": "Indexed",
-    "metadata": {
-      "version": "0.1.0-preview",
-      "category": "Azure Arc",
-      "preview": true
-    },
-    "parameters": {
-      "effect": {
-        "type": "String",
-        "metadata": {
-          "displayName": "Effect",
-          "description": "Enable or disable the execution of the policy"
-        },
-        "allowedValues": [
-          "DeployIfNotExists",
-          "Disabled"
-        ],
-        "defaultValue": "DeployIfNotExists"
+  "displayName": "[Preview]: Configure Windows Arc machines to automatically install the Windows Admin Center extension",
+  "description": "Configure Windows Admin Center extension for Windows Arc machines.",
+  "mode": "Indexed",
+  "metadata": {
+    "version": "0.1.0-preview",
+    "category": "Azure Arc",
+    "preview": true
+  },
+  "parameters": {
+    "effect": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Effect",
+        "description": "Enable or disable the execution of the policy"
       },
-      "listOfApplicableLocations": {
-        "type": "Array",
-        "metadata": {
-          "displayName": "Applicable Locations",
-          "description": "The list of locations where the policy should be applied.",
-          "strongType": "location"
-        },
-        "allowedValues": [
-          "australiaeast",
-          "canadacentral",
-          "centralus",
-          "eastasia",
-          "eastus",
-          "eastus2",
-          "francecentral",
-          "japaneast",
-          "koreacentral",
-          "northcentralus",
-          "northeurope",
-          "southcentralus",
-          "southeastasia",
-          "uksouth",
-          "ukwest",
-          "westcentralus",
-          "westeurope",
-          "westus",
-          "westus2",
-          "westus3"
-        ],
-        "defaultValue": [
-          "australiaeast",
-          "canadacentral",
-          "centralus",
-          "eastasia",
-          "eastus",
-          "eastus2",
-          "francecentral",
-          "japaneast",
-          "koreacentral",
-          "northcentralus",
-          "northeurope",
-          "southcentralus",
-          "southeastasia",
-          "uksouth",
-          "ukwest",
-          "westcentralus",
-          "westeurope",
-          "westus",
-          "westus2",
-          "westus3"
-        ]
-      }
+      "allowedValues": [
+        "DeployIfNotExists",
+        "Disabled"
+      ],
+      "defaultValue": "DeployIfNotExists"
     },
-    "policyRule": {
-      "if": {
-        "allOf": [
-          {
-            "field": "type",
-            "equals": "Microsoft.HybridCompute/machines"
-          },
-          {
-            "field": "location",
-            "in": "[parameters('listOfApplicableLocations')]"
-          },
-          {
-            "field": "Microsoft.HybridCompute/imageOffer",
-            "like": "windows*"
-          }
-        ]
+    "listOfApplicableLocations": {
+      "type": "Array",
+      "metadata": {
+        "displayName": "Applicable Locations",
+        "description": "The list of locations where the policy should be applied.",
+        "strongType": "location"
       },
-      "then": {
-        "effect": "[parameters('effect')]",
-        "details": {
-          "type": "Microsoft.HybridCompute/machines/extensions",
-          "roleDefinitionIds": [
-            "/providers/microsoft.authorization/roleDefinitions/cd570a14-e51a-42ad-bac8-bafd67325302"
-          ],
-          "existenceCondition": {
-            "allOf": [
-              {
-                "field": "Microsoft.HybridCompute/machines/extensions/type",
-                "equals": "ChangeTracking-Windows"
-              },
-              {
-                "field": "Microsoft.HybridCompute/machines/extensions/Publisher",
-                "equals": "Microsoft.Azure.ChangeTrackingAndInventory"
-              },
-              {
-                "field": "Microsoft.HybridCompute/machines/extensions/provisioningState",
-                "equals": "Succeeded"
-              }
-            ]
-          },
-          "deployment": {
-            "properties": {
-              "mode": "incremental",
-              "template": {
-                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "parameters": {
-                  "vmName": {
-                    "type": "string"
-                  },
-                  "location": {
-                    "type": "string"
-                  }
-                },
-                "variables": {
-                  "vmExtensionName": "AdminCenter",
-                  "vmExtensionPublisher": "Microsoft.AdminCenter",
-                  "vmExtensionType": "AdminCenter",
-                  "vmExtensionTypeHandlerVersion": "0.0"
-                },
-                "resources": [
-                  {
-                    "name": "[concat(parameters('vmName'), '/', variables('vmExtensionName'))]",
-                    "type": "Microsoft.HybridCompute/machines/extensions",
-                    "location": "[parameters('location')]",
-                    "apiVersion": "2022-08-11-preview",
-                    "properties": {
-                      "publisher": "[variables('vmExtensionPublisher')]",
-                      "type": "[variables('vmExtensionType')]",
-                      "typeHandlerVersion": "[variables('vmExtensionTypeHandlerVersion')]",
-                      "autoUpgradeMinorVersion": true,
-                      "settings": {},
-                      "protectedSettings": {}
-                    }
-                  }
-                ]
-              },
+      "allowedValues": [
+        "australiaeast",
+        "canadacentral",
+        "centralus",
+        "eastasia",
+        "eastus",
+        "eastus2",
+        "francecentral",
+        "japaneast",
+        "koreacentral",
+        "northcentralus",
+        "northeurope",
+        "southcentralus",
+        "southeastasia",
+        "uksouth",
+        "ukwest",
+        "westcentralus",
+        "westeurope",
+        "westus",
+        "westus2",
+        "westus3"
+      ],
+      "defaultValue": [
+        "australiaeast",
+        "canadacentral",
+        "centralus",
+        "eastasia",
+        "eastus",
+        "eastus2",
+        "francecentral",
+        "japaneast",
+        "koreacentral",
+        "northcentralus",
+        "northeurope",
+        "southcentralus",
+        "southeastasia",
+        "uksouth",
+        "ukwest",
+        "westcentralus",
+        "westeurope",
+        "westus",
+        "westus2",
+        "westus3"
+      ]
+    }
+  },
+  "policyRule": {
+    "if": {
+      "allOf": [
+        {
+          "field": "type",
+          "equals": "Microsoft.HybridCompute/machines"
+        },
+        {
+          "field": "location",
+          "in": "[parameters('listOfApplicableLocations')]"
+        },
+        {
+          "field": "Microsoft.HybridCompute/imageOffer",
+          "like": "windows*"
+        }
+      ]
+    },
+    "then": {
+      "effect": "[parameters('effect')]",
+      "details": {
+        "type": "Microsoft.HybridCompute/machines/extensions",
+        "roleDefinitionIds": [
+          "/providers/microsoft.authorization/roleDefinitions/cd570a14-e51a-42ad-bac8-bafd67325302"
+        ],
+        "existenceCondition": {
+          "allOf": [
+            {
+              "field": "Microsoft.HybridCompute/machines/extensions/type",
+              "equals": "AdminCenter"
+            },
+            {
+              "field": "Microsoft.HybridCompute/machines/extensions/Publisher",
+              "equals": "Microsoft.AdminCenter"
+            },
+            {
+              "field": "Microsoft.HybridCompute/machines/extensions/provisioningState",
+              "equals": "Succeeded"
+            }
+          ]
+        },
+        "deployment": {
+          "properties": {
+            "mode": "incremental",
+            "template": {
+              "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+              "contentVersion": "1.0.0.0",
               "parameters": {
                 "vmName": {
-                  "value": "[field('name')]"
+                  "type": "string"
                 },
                 "location": {
-                  "value": "[field('location')]"
+                  "type": "string"
                 }
+              },
+              "variables": {
+                "vmExtensionName": "AdminCenter",
+                "vmExtensionPublisher": "Microsoft.AdminCenter",
+                "vmExtensionType": "AdminCenter",
+                "vmExtensionTypeHandlerVersion": "0.0.0"
+              },
+              "resources": [
+                {
+                  "name": "[concat(parameters('vmName'), '/', variables('vmExtensionName'))]",
+                  "type": "Microsoft.HybridCompute/machines/extensions",
+                  "location": "[parameters('location')]",
+                  "apiVersion": "2022-08-11-preview",
+                  "properties": {
+                    "publisher": "[variables('vmExtensionPublisher')]",
+                    "type": "[variables('vmExtensionType')]",
+                    "typeHandlerVersion": "[variables('vmExtensionTypeHandlerVersion')]",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {},
+                    "protectedSettings": {}
+                  }
+                }
+              ]
+            },
+            "parameters": {
+              "vmName": {
+                "value": "[field('name')]"
+              },
+              "location": {
+                "value": "[field('location')]"
               }
             }
           }
         }
       }
     }
-  },
-  "id": "/providers/Microsoft.Authorization/policyDefinitions/4bb303db-d051-4099-95d2-e3e1428a4cd5",
-  "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "4bb303db-d051-4099-95d2-e3e1428a4cd5"
+  }
 }
