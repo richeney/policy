@@ -62,5 +62,12 @@
       "westus2",
       "westus3"
     ]
+  },
+  "port": {
+    "type": "Integer",
+    "defaultValue": 6516,
+    "metadata": {
+      "description": "The port for Windows Admin Center."
+    }
   }
 }

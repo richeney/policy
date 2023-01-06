@@ -13,9 +13,9 @@ Cannot create the endpoint in an ARM template yet, except with Deployment Script
 
 * <https://learn.microsoft.com/windows-server/manage/windows-admin-center/azure/manage-arc-hybrid-machines>
 * <https://learn.microsoft.com/azure/azure-arc/servers/manage-vm-extensions>
-* <https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/features-linux>
-* <https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/features-windows>
-* <https://learn.microsoft.com/en-gb/rest/api/hybridcompute/machine-extensions/create-or-update>
+* <https://learn.microsoft.com/azure/virtual-machines/extensions/features-linux>
+* <https://learn.microsoft.com/azure/virtual-machines/extensions/features-windows>
+* <https://learn.microsoft.com/rest/api/hybridcompute/machine-extensions/create-or-update>
 
 ## Manual extension installation
 
@@ -91,10 +91,10 @@ Example commands for an Azure Arc-enabled Server.
 ## ARM Template
 
 ```bash
-az deployment group create --resource-group $resourceGroup --name "${machineName}-AdminCenter" --template-file azuredeploy.json --parameters vmName=$machineName
+az deployment group create --resource-group $resourceGroup --name "${machineName}-AdminCenter" --template-file azuredeploy-extension_and_endpoint.json --parameters vmName=$machineName
 ```
 
-> Note that this will fail with defaul ALZ policy assignment as the storage account created by deploymentScripts will be public.
+> Note that this will fail with teh default ALZ policy assignment as the storage account created by deploymentScripts will be public.
 
 ## Troubleshooting
 
@@ -114,13 +114,13 @@ Invoke-RestMethod -Method GET -Uri https://wac.azure.com
 azcmagent config list
 ```
 
-> You can specify pultiple ports, e.g.
+> You can specify multiple ports for azcmagent, e.g.
 >
 > `azcmagent config set incomingconnections.ports "22,6516"`
 
 ## Policy installation
 
-Management group assumed here, using id `alz`. Check `az policy definition create` for alternative
+Management group assumed here, using id `alz`. Check `az policy definition create` for alternative scopes. The policy is extension only at the moment.
 
 1. Move to this directory
 1. Create the audit definition

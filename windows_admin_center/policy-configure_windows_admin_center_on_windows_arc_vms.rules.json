@@ -50,27 +50,34 @@
               },
               "location": {
                 "type": "string"
+              },
+              "port": {
+                "type": "int",
+                "defaultValue": 6516,
+                "metadata": {
+                  "description": "The port for Windows Admin Center."
+                }
               }
             },
             "variables": {
               "vmExtensionName": "AdminCenter",
               "vmExtensionPublisher": "Microsoft.AdminCenter",
-              "vmExtensionType": "AdminCenter",
-              "vmExtensionTypeHandlerVersion": "0.0.0"
+              "vmExtensionType": "AdminCenter"
             },
             "resources": [
               {
-                "name": "[concat(parameters('vmName'), '/', variables('vmExtensionName'))]",
                 "type": "Microsoft.HybridCompute/machines/extensions",
+                "apiVersion": "2022-11-10",
+                "name": "[concat(parameters('vmName'), '/', variables('vmExtensionName'))]",
                 "location": "[parameters('location')]",
-                "apiVersion": "2022-08-11-preview",
                 "properties": {
                   "publisher": "[variables('vmExtensionPublisher')]",
                   "type": "[variables('vmExtensionType')]",
-                  "typeHandlerVersion": "[variables('vmExtensionTypeHandlerVersion')]",
                   "autoUpgradeMinorVersion": true,
-                  "settings": {},
-                  "protectedSettings": {}
+                  "enableAutomaticUpgrade": true,
+                  "settings": {
+                    "port": "[parameters('port')]"
+                  }
                 }
               }
             ]
@@ -81,6 +88,9 @@
             },
             "location": {
               "value": "[field('location')]"
+            },
+            "port": {
+              "value": "[parameters('port')]"
             }
           }
         }
